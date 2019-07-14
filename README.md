@@ -1,13 +1,12 @@
-暂时没有LOGO  
-![](https://img.shields.io/badge/release-1.0-blue.svg)
+暂时没有LOGO  ![](https://img.shields.io/badge/release-1.0-blue.svg)
 
-## ？
+## 关于
 一个简单的Android应用，通过蓝牙和单片机进行通信。  
 学习了一些Kotlin基础后，直接上手蓝牙开发，之前接触的是经典蓝牙，因为资料太少，转战BLE。  
 
 ## 使用框架
-[Anko](https://github.com/Kotlin/anko){:target="blank"}  
-[FastBle](https://github.com/Jasonchenlijian/FastBle){:target="blank"}  
+[Anko](https://github.com/Kotlin/anko)  
+[FastBle](https://github.com/Jasonchenlijian/FastBle)  
 
 ## V1.0 2019.7.14
 [SmartWardrobeV1.0.apk](https://github.com/lfalive/Smart-wardrobe/raw/master/app/release/SmartWardrobe_v1.0_07-14_release.apk)  
