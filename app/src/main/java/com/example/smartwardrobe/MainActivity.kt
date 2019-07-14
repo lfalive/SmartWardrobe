@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.clj.fastble.callback.BleScanCallback
@@ -57,7 +56,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun initPermission(){
         //private var mRequestCode = 0x1  //权限请求码,因为本应用只需要一次请求，所以省去传参和回调里的判断
-        val permissions = arrayOf( Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION)
+        val permissions = arrayOf( Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION)
         for (permission in permissions) {
             if(ContextCompat.checkSelfPermission(application, permission) != PackageManager.PERMISSION_GRANTED)
                 ActivityCompat.requestPermissions(this@MainActivity, permissions, 0x1)
@@ -100,9 +100,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun startScan(scanRuleConfig : BleScanRuleConfig)
     {
-        //注册扫描参数
-        BleManager.getInstance().initScanRule(scanRuleConfig)
-
+        BleManager.getInstance().initScanRule(scanRuleConfig) //注册扫描参数
         BleManager.getInstance().scan(object : BleScanCallback() {
             //本次扫描动作是否开启成功
             override fun onScanStarted(success: Boolean) {
