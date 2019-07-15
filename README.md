@@ -7,7 +7,7 @@
 [FastBle](https://github.com/Jasonchenlijian/FastBle)  
 
 ## V1.0 2019.7.15
-[IntWardrobeV1.0.apk](https://github.com/lfalive/Smart-wardrobe/raw/master/app/release/IntWardrobe_v1.0_07-14_release.apk)  
+[IntWardrobeV1.0.apk](https://raw.githubusercontent.com/lfalive/Smart-wardrobe/master/app/release/IntWardrobe_v1.0_07-15_release.apk?token=AI5MP7XEYQHQAEYRE3BLPTK5GWDGW)  
 * 对手机蓝牙的开关控制
 * 针对Android6.0及以上版本的动态权限申请
 * 对附近设备的搜索显示

@@ -1,18 +1,24 @@
 package com.example.smartwardrobe
 
 import android.Manifest
+import android.bluetooth.BluetoothGatt
 import android.content.pm.PackageManager
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.clj.fastble.BleManager
+import com.clj.fastble.callback.BleGattCallback
 import com.clj.fastble.callback.BleScanCallback
 import com.clj.fastble.data.BleDevice
-import com.clj.fastble.BleManager
+import com.clj.fastble.exception.BleException
 import com.clj.fastble.scan.BleScanRuleConfig
 import kotlinx.android.synthetic.main.activity_main.*
+import org.jetbrains.anko.alert
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.toast
+import org.jetbrains.anko.uiThread
 import kotlin.system.exitProcess
-import org.jetbrains.anko.*
 
 /*
  *  @项目名：  SmartWardrobe
@@ -50,6 +56,35 @@ class MainActivity : AppCompatActivity() {
                     setScanTimeOut(10000).
                     build())
             }
+        }
+
+        //连接设备
+        btn_connect.setOnClickListener {
+            //根据mac地址连接设备
+            BleManager.getInstance().connect("6F:74:F5:D3:7A:34", object : BleGattCallback() {
+                override fun onStartConnect() {
+                    toast("开始进行连接")
+                }
+
+                override fun onConnectFail(bleDevice: BleDevice, exception: BleException) {
+                    toast("连接失败")
+                }
+
+                override fun onConnectSuccess(bleDevice: BleDevice, gatt: BluetoothGatt, status: Int) {
+                    toast("连接成功   $status")
+                    //status为0连接成功
+                }
+
+                //连接断开，特指连接后再断开的情况。
+                override fun onDisConnected(
+                    isActiveDisConnected: Boolean,
+                    bleDevice: BleDevice,
+                    gatt: BluetoothGatt,
+                    status: Int
+                ) {
+
+                }
+            })
         }
 
     }
