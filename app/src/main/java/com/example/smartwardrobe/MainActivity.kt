@@ -1,6 +1,7 @@
 package com.example.smartwardrobe
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.bluetooth.BluetoothGatt
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -22,12 +23,16 @@ import kotlin.system.exitProcess
 
 /*
  *  @项目名：  SmartWardrobe
+ *  @APP名：   IntWardrobe
  *  @创建者:   Lfalive
  *  @创建时间: 2019/7/14
 */
 
 class MainActivity : AppCompatActivity() {
 
+    var mbleDevice: BleDevice? = null    //待连接的设备
+
+    @SuppressLint("SetTextI18n")    //忽略警告
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -60,31 +65,21 @@ class MainActivity : AppCompatActivity() {
 
         //连接设备
         btn_connect.setOnClickListener {
-            //根据mac地址连接设备
-            BleManager.getInstance().connect("6F:74:F5:D3:7A:34", object : BleGattCallback() {
-                override fun onStartConnect() {
-                    toast("开始进行连接")
-                }
+            if(mbleDevice != null) connect()
+            else tv_connectlog.text = tv_connectlog.text.toString() + "\n未发现智能衣柜！"
+        }
 
-                override fun onConnectFail(bleDevice: BleDevice, exception: BleException) {
-                    toast("连接失败")
-                }
+        //连接状态
+        btn_connectstate.setOnClickListener {
+            if(BleManager.getInstance().isConnected(mbleDevice)) tv_connectlog .text = tv_connectlog.text.toString() + "\nOK!"
+            else tv_connectlog.text = tv_connectlog.text.toString() + "\nNOT OK!"
+        }
 
-                override fun onConnectSuccess(bleDevice: BleDevice, gatt: BluetoothGatt, status: Int) {
-                    toast("连接成功   $status")
-                    //status为0连接成功
-                }
-
-                //连接断开，特指连接后再断开的情况。
-                override fun onDisConnected(
-                    isActiveDisConnected: Boolean,
-                    bleDevice: BleDevice,
-                    gatt: BluetoothGatt,
-                    status: Int
-                ) {
-
-                }
-            })
+        //断开连接
+        btn_disconnect.setOnClickListener {
+            if(BleManager.getInstance().isConnected(mbleDevice))
+                BleManager.getInstance().disconnect(mbleDevice)
+            else tv_connectlog.text = tv_connectlog.text.toString() + "\n暂无设备连接！"
         }
 
     }
@@ -133,6 +128,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("SetTextI18n")    //忽略警告
     private fun startScan(scanRuleConfig : BleScanRuleConfig)
     {
         BleManager.getInstance().initScanRule(scanRuleConfig) //注册扫描参数
@@ -149,12 +145,41 @@ class MainActivity : AppCompatActivity() {
             //扫描过程中的所有过滤后的结果回调
             override fun onScanning(bleDevice: BleDevice) {
                 tv_scanresult.text = "${tv_scanresult.text}\n${bleDevice.name}\n${bleDevice.mac}"
+                if(mbleDevice == null) mbleDevice = bleDevice
             }
             //本次扫描时段内所有被扫描且过滤后的设备集合
             override fun onScanFinished(scanResultList: List<BleDevice>) {
                 tv_scanresult.text = "扫描结束！找到" + scanResultList.size.toString() + "个设备。"
+                if(mbleDevice == null) tv_scanresult.text = "${tv_scanresult.text}\n未发现智能衣柜！"
                 for(device in scanResultList)
                     tv_scanresult.text = "${tv_scanresult.text}\n${device.name}\n${device.mac}"
+            }
+        })
+    }
+
+    @SuppressLint("SetTextI18n")    //忽略警告
+    private fun connect()
+    {
+        //根据mac地址连接设备
+        BleManager.getInstance().connect(mbleDevice, object : BleGattCallback() {
+            override fun onStartConnect() {
+                tv_connectlog.text = tv_connectlog.text.toString() + "\n开始进行连接"
+            }
+            override fun onConnectFail(bleDevice: BleDevice, exception: BleException) {
+                tv_connectlog.text = tv_connectlog.text.toString() + "\n连接失败"
+            }
+            override fun onConnectSuccess(bleDevice: BleDevice, gatt: BluetoothGatt, status: Int) {
+                tv_connectlog.text = tv_connectlog.text.toString() + "\n连接成功   $status"
+                //status为0连接成功
+            }
+            //连接断开，特指连接后再断开的情况。
+            override fun onDisConnected(
+                isActiveDisConnected: Boolean,
+                bleDevice: BleDevice,
+                gatt: BluetoothGatt,
+                status: Int
+            ) {
+                tv_connectlog.text = tv_connectlog.text.toString() + "\n连上了又断了"
             }
         })
     }

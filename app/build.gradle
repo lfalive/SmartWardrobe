@@ -12,7 +12,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 29
         versionCode 1
-        versionName "1.0"
+        versionName "1.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -32,6 +32,12 @@ android {
                 outputFileName = "IntWardrobe_v" + defaultConfig.versionName + "_" + createTime + "_" + buildType.name + ".apk"
             }
         }
+    }
+
+    //指定jdk版本
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
 }
