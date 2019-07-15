@@ -166,7 +166,7 @@ class MainActivity : AppCompatActivity() {
                 tv_connectlog.text = tv_connectlog.text.toString() + "\n开始进行连接"
             }
             override fun onConnectFail(bleDevice: BleDevice, exception: BleException) {
-                tv_connectlog.text = tv_connectlog.text.toString() + "\n连接失败"
+                tv_connectlog.text = tv_connectlog.text.toString() + "\n连接失败......"
             }
             override fun onConnectSuccess(bleDevice: BleDevice, gatt: BluetoothGatt, status: Int) {
                 tv_connectlog.text = tv_connectlog.text.toString() + "\n连接成功   $status"
