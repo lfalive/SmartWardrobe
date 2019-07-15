@@ -82,7 +82,7 @@ class MainActivity : AppCompatActivity() {
                     gatt: BluetoothGatt,
                     status: Int
                 ) {
-                    toast("ugjeoiigggjges")
+                    toast("ugjeoiiggghf jges")
                 }
             })
         }
