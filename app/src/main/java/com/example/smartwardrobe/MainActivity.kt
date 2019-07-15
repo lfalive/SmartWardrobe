@@ -180,6 +180,7 @@ class MainActivity : AppCompatActivity() {
                 status: Int
             ) {
                 tv_connectlog.text = tv_connectlog.text.toString() + "\n连上了又断了"
+                toast("wdnmd")
             }
         })
     }
