@@ -30,7 +30,7 @@ import kotlin.system.exitProcess
 
 class MainActivity : AppCompatActivity() {
 
-    var mbleDevice: BleDevice? = null    //待连接的设备
+    var mbleDevice: BleDevice? = null   //待连接的设备
 
     @SuppressLint("SetTextI18n")    //忽略警告
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity() {
             .setConnectOverTime(10000).operateTimeout = 5000
 
         //初始化
-        tv_status.text = if(BleManager.getInstance().isBlueEnable) "开启" else "关闭"
+        tv_status.text = if (BleManager.getInstance().isBlueEnable) "开启" else "关闭"
         initPermission()
 
         //蓝牙开关按钮
@@ -54,19 +54,23 @@ class MainActivity : AppCompatActivity() {
 
         //开始扫描
         btn_startsearch.setOnClickListener {
-            if(!BleManager.getInstance().isBlueEnable) toast("请打开蓝牙！")
-            else {
+            if (BleManager.getInstance().isBlueEnable)
+            {
                 //注意这里有扫描参数设置
-                startScan(BleScanRuleConfig.Builder().
-                    setScanTimeOut(10000).
-                    build())
+                startScan(
+                    BleScanRuleConfig.Builder().setScanTimeOut(5000).build()
+                )
             }
+            else toast("请打开蓝牙！")
         }
 
         //连接设备
         btn_connect.setOnClickListener {
-            if(mbleDevice != null) connect()
-            else tv_connectlog.text = tv_connectlog.text.toString() + "\n未发现智能衣柜！"
+            when {
+                mbleDevice == null -> tv_connectlog.text = tv_connectlog.text.toString() + "\n未发现智能衣柜！"
+                BleManager.getInstance().isConnected(mbleDevice) -> toast("请勿重复连接！")
+                else -> connect()
+            }
         }
 
         //连接状态
@@ -145,12 +149,13 @@ class MainActivity : AppCompatActivity() {
             //扫描过程中的所有过滤后的结果回调
             override fun onScanning(bleDevice: BleDevice) {
                 tv_scanresult.text = "${tv_scanresult.text}\n${bleDevice.name}\n${bleDevice.mac}"
-                if(mbleDevice == null) mbleDevice = bleDevice
+                if(bleDevice.mac == "EC:79:DB:5D:AB:A1") mbleDevice = bleDevice
             }
             //本次扫描时段内所有被扫描且过滤后的设备集合
             override fun onScanFinished(scanResultList: List<BleDevice>) {
-                tv_scanresult.text = "扫描结束！找到" + scanResultList.size.toString() + "个设备。"
-                if(mbleDevice == null) tv_scanresult.text = "${tv_scanresult.text}\n未发现智能衣柜！"
+                tv_scanresult.text = "扫描结束！找到" + scanResultList.size.toString() + "个设备。\n"
+                if(mbleDevice == null) tv_scanresult.text = "${tv_scanresult.text}未"
+                tv_scanresult.text = "${tv_scanresult.text}发现智能衣柜！"
                 for(device in scanResultList)
                     tv_scanresult.text = "${tv_scanresult.text}\n${device.name}\n${device.mac}"
             }
@@ -160,7 +165,6 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n")    //忽略警告
     private fun connect()
     {
-        //根据mac地址连接设备
         BleManager.getInstance().connect(mbleDevice, object : BleGattCallback() {
             override fun onStartConnect() {
                 tv_connectlog.text = tv_connectlog.text.toString() + "\n开始进行连接"
@@ -179,8 +183,8 @@ class MainActivity : AppCompatActivity() {
                 gatt: BluetoothGatt,
                 status: Int
             ) {
-                tv_connectlog.text = tv_connectlog.text.toString() + "\n连上了又断了"
-                toast("wdnmd")
+                if(isActiveDisConnected) tv_connectlog.text = tv_connectlog.text.toString() + "\n断开连接！"
+                else tv_connectlog.text = tv_connectlog.text.toString() + "\n连上了又断了"
             }
         })
     }
