@@ -21,6 +21,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
     //release版本输出包名自动追加版本号和版本名称
     applicationVariants.all {
         variant -> variant.outputs.all {
@@ -28,10 +29,11 @@ android {
             if (buildType.name == 'release') {
                 def createTime = new Date().format("MM-dd", TimeZone.getTimeZone("GMT+08:00"))
                 // app包名称
-                outputFileName = "SmartWardrobe_v" + defaultConfig.versionName + "_" + createTime + "_" + buildType.name + ".apk"
+                outputFileName = "IntWardrobe_v" + defaultConfig.versionName + "_" + createTime + "_" + buildType.name + ".apk"
             }
         }
     }
+
 }
 
 dependencies {
