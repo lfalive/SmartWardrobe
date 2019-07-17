@@ -142,6 +142,47 @@
                     android:layout_margin="10dp"
                     android:orientation="horizontal">
 
+                <Button
+                        android:id="@+id/btn_opennotify"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="打开Notify"
+                        android:textColor="#000000"
+                        android:textSize="17sp"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:orientation="horizontal">
+
+                <EditText
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPersonName"
+                        android:ems="10"
+                        android:id="@+id/msg" android:layout_weight="1"/>
+
+                <Button
+                        android:id="@+id/btn_send"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="发送消息"
+                        android:textColor="#000000"
+                        android:textSize="17sp"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:orientation="horizontal">
+
                 <TextView
                         android:id="@+id/tv_connectlog"
                         android:layout_width="0dp"
@@ -156,6 +197,5 @@
         </LinearLayout>
 
     </ScrollView>
-
 
 </LinearLayout>
