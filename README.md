@@ -21,7 +21,7 @@
 
 ## V1.1 2019.7.17
 
-[IntWardrobeV1.0.apk]()    
+[IntWardrobeV1.0.apk](https://raw.githubusercontent.com/lfalive/Smart-wardrobe/master/app/release/IntWardrobe_v1.1_07-17_release.apk?token=AI5MP7WBNKEGSTTISUFKCMC5HAVEM)    
 
 * 确定了目标设备的mac地址(刚收到HC-42
 * 连接指定设备/查询连接状态/断开连接
