@@ -8,7 +8,7 @@
 [FastBle](https://github.com/Jasonchenlijian/FastBle)  
 
 ## 下载
-[IntWardrobeV1.2.apk](https://raw.githubusercontent.com/lfalive/Smart-wardrobe/master/app/release/IntWardrobe_v1.2_07-18_release.apk?token=AI5MP7WBNKEGSTTISUFKCMC5HAVEM)
+[IntWardrobeV1.2.apk](https://raw.githubusercontent.com/lfalive/Smart-wardrobe/master/app/release/IntWardrobe_v1.2_07-18_release.apk?token=AI5MP7R7XS6NBI72JW56RIC5HFGAM)
 
 ## 功能
 
