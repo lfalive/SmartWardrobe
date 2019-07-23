@@ -8,7 +8,7 @@
 [FastBle](https://github.com/Jasonchenlijian/FastBle)  
 
 ## 下载
-[IntWardrobeV1.2.apk](https://raw.githubusercontent.com/lfalive/Smart-wardrobe/master/app/release/IntWardrobe_v1.2_07-18_release.apk?token=AI5MP7R7XS6NBI72JW56RIC5HFGAM)
+[IntWardrobeV1.3.apk](https://raw.githubusercontent.com/lfalive/Smart-wardrobe/master/app/release/IntWardrobe_v1.3_07-23_release.apk?token=AI5MP7R7XS6NBI72JW56RIC5HFGAM)
 
 ## 功能
 
@@ -27,6 +27,9 @@
 * 获取相应Service和Characteristic
 * 通过BLE协议进行通信，与HC-42模块互发消息，即时接收
 
+### V1.3 2019.7.23
+* 文件遍历和文本文件和图片文件的IO
+
 ## 学到了
 * 协程（为了优化资源、异步处理任务
 * 动态权限的申请（大坑，调了很久
@@ -34,3 +37,6 @@
 * 指定jdk版本以解决一些问题
 * 使用@SuppressLint()忽略了一类警告（关于String的，暂时不想管
 * Byte[]、HexString、String的相互转换和处理
+* 用Edit_text控件实现Spinner
+* kotlin.io库和java.io库的使用
+* Bitmap、Byte[]、图片文件的相互转换
