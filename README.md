@@ -1,4 +1,4 @@
-![![GitHub release](https://img.shields.io/github/release/lfalive/Smart-wardrobe.svg) ](https://img.shields.io/badge/release-1.2-blue.svg)  
+![![GitHub release](https://img.shields.io/github/release/lfalive/Smart-wardrobe.svg) ](https://img.shields.io/badge/release-1.3-blue.svg)  
 
 一个简单的Android应用，通过蓝牙和单片机进行通信。  
 学习了一些Kotlin基础后，直接上手蓝牙开发，之前接触的是经典蓝牙，因为资料太少，转战BLE。  
@@ -8,7 +8,7 @@
 [FastBle](https://github.com/Jasonchenlijian/FastBle)  
 
 ## 下载
-[IntWardrobeV1.3.apk](https://raw.githubusercontent.com/lfalive/Smart-wardrobe/master/app/release/IntWardrobe_v1.3_07-23_release.apk?token=AI5MP7R7XS6NBI72JW56RIC5HFGAM)
+[IntWardrobeV1.3.apk](https://raw.githubusercontent.com/lfalive/Smart-wardrobe/master/app/release/IntWardrobe_v1.3_07-23_release.apk?token=AI5MP7XCCAWYR3LV7PWJ5Y25H7XAW)
 
 ## 功能
 
