@@ -26,7 +26,6 @@ import java.io.OutputStream
 import kotlin.system.exitProcess
 
 /*
- *  @项目名:   SmartWardrobe
  *  @project:   SmartWardrobe
  *  @module:    app
  *  @创建者:   Lfalive

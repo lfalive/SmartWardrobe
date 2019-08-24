@@ -8,7 +8,7 @@
 [FastBle](https://github.com/Jasonchenlijian/FastBle)  
 
 ## 下载
-[IntWardrobeV1.3.apk](https://raw.githubusercontent.com/lfalive/Smart-wardrobe/master/app/release/IntWardrobe_v1.3_07-23_release.apk?token=AI5MP7XCCAWYR3LV7PWJ5Y25H7XAW)
+[IntWardrobeV1.3.apk](https://raw.githubusercontent.com/lfalive/SmartWardrobe/master/app/release/SmartWardrobe_v1.3_08-24_release.apk?token=AI5MP7SZVJR5F6FU3QFBL4S5NIIRC)
 
 ## 功能
 
@@ -27,7 +27,7 @@
 * 获取相应Service和Characteristic
 * 通过BLE协议进行通信，与HC-42模块互发消息，即时接收
 
-### V1.3 2019.7.23
+### V1.3 2019.8.24
 * 文件遍历和文本文件和图片文件的IO
 
 ## 学到了
