@@ -8,7 +8,7 @@ android {
     compileSdkVersion 29
     buildToolsVersion "29.0.0"
     defaultConfig {
-        applicationId "com.example.smartwardrobe"
+        applicationId "com.huster.smartwardrobe"
         minSdkVersion 19
         targetSdkVersion 29
         versionCode 1
@@ -29,7 +29,7 @@ android {
             if (buildType.name == 'release') {
                 def createTime = new Date().format("MM-dd", TimeZone.getTimeZone("GMT+08:00"))
                 // app包名称
-                outputFileName = "IntWardrobe_v" + defaultConfig.versionName + "_" + createTime + "_" + buildType.name + ".apk"
+                outputFileName = "SmartWardrobe_v" + defaultConfig.versionName + "_" + createTime + "_" + buildType.name + ".apk"
             }
         }
     }
@@ -46,7 +46,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.1.0-rc01'
-    implementation 'androidx.core:core-ktx:1.2.0-alpha02'
+    implementation 'androidx.core:core-ktx:1.2.0-alpha03'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta2'
     implementation "org.jetbrains.anko:anko:$anko_version"
     implementation 'com.clj.fastble:FastBleLib:2.3.4'

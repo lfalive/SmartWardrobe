@@ -1,4 +1,4 @@
-package com.example.smartwardrobe
+package com.huster.smartwardrobe
 
 import org.junit.Test
 

@@ -1,4 +1,4 @@
-package com.example.smartwardrobe
+package com.huster.smartwardrobe
 
 import androidx.test.InstrumentationRegistry
 import androidx.test.runner.AndroidJUnit4

@@ -1,4 +1,4 @@
-package com.example.smartwardrobe
+package com.huster.smartwardrobe
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -26,8 +26,9 @@ import java.io.OutputStream
 import kotlin.system.exitProcess
 
 /*
- *  @项目名：  SmartWardrobe
- *  @APP名：   IntWardrobe
+ *  @项目名:   SmartWardrobe
+ *  @project:   SmartWardrobe
+ *  @module:    app
  *  @创建者:   Lfalive
  *  @创建时间: 2019/7/14
 */
@@ -36,10 +37,10 @@ data class Item(var id: Int, var type: String, var img: String)
 
 class MainActivity : AppCompatActivity() {
 
-    private var mbleDevice: BleDevice? = null   //待连接的设备
+    private var mBleDevice: BleDevice? = null   //待连接的设备
     private var mgatt: BluetoothGatt? = null    //GATT协议
-    private var muuid_service: String? = null   //服务
-    private var muuid_chara: String? = null //特征
+    private var mUuidService: String? = null   //服务
+    private var mUuidChara: String? = null //特征
     private var mpath: String = ""  //文件目录
     private var mitems: MutableList<Item> = mutableListOf() //数据list
 
@@ -78,23 +79,24 @@ class MainActivity : AppCompatActivity() {
         //连接设备
         btn_connect.setOnClickListener {
             when {
-                mbleDevice == null -> tv_connectlog.text = tv_connectlog.text.toString() + "未发现智能衣柜！\n"
-                BleManager.getInstance().isConnected(mbleDevice) -> toast("请勿重复连接！")
+                mBleDevice == null -> tv_connectlog.text =
+                    tv_connectlog.text.toString() + "未发现智能衣柜！\n"
+                BleManager.getInstance().isConnected(mBleDevice) -> toast("请勿重复连接！")
                 else -> connect()
             }
         }
 
         //连接状态
         btn_connectstate.setOnClickListener {
-            if (BleManager.getInstance().isConnected(mbleDevice)) tv_connectlog.text =
+            if (BleManager.getInstance().isConnected(mBleDevice)) tv_connectlog.text =
                 tv_connectlog.text.toString() + "OK!\n"
             else tv_connectlog.text = tv_connectlog.text.toString() + "NOT OK!\n"
         }
 
         //断开连接
         btn_disconnect.setOnClickListener {
-            if (BleManager.getInstance().isConnected(mbleDevice))
-                BleManager.getInstance().disconnect(mbleDevice)
+            if (BleManager.getInstance().isConnected(mBleDevice))
+                BleManager.getInstance().disconnect(mBleDevice)
             else tv_connectlog.text = tv_connectlog.text.toString() + "暂无设备连接！\n"
         }
 
@@ -103,7 +105,8 @@ class MainActivity : AppCompatActivity() {
 
         //发送消息
         btn_send.setOnClickListener {
-            if (msg.text.toString() == "") tv_connectlog.text = tv_connectlog.text.toString() + "消息为空！\n"
+            if (msg.text.toString() == "") tv_connectlog.text =
+                tv_connectlog.text.toString() + "消息为空！\n"
             else sendMsg(msg.text.toString() + "\n")
         }
 
@@ -208,12 +211,20 @@ class MainActivity : AppCompatActivity() {
             Manifest.permission.ACCESS_COARSE_LOCATION
         )
         for (permission in permissions) {
-            if (ContextCompat.checkSelfPermission(application, permission) != PackageManager.PERMISSION_GRANTED)
+            if (ContextCompat.checkSelfPermission(
+                    application,
+                    permission
+                ) != PackageManager.PERMISSION_GRANTED
+            )
                 ActivityCompat.requestPermissions(this@MainActivity, permissions, 0x1)
         }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         //本应用只有一次请求，requestCode为0x1
         for (Result in grantResults) {
@@ -227,6 +238,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @Suppress("ControlFlowWithEmptyBody")   //忽略警告
     private fun btSwitch(flag: Int) {
         doAsync {
             //打开/关闭蓝牙，阻塞进程
@@ -261,13 +273,13 @@ class MainActivity : AppCompatActivity() {
             //扫描过程中的所有过滤后的结果回调
             override fun onScanning(bleDevice: BleDevice) {
                 tv_scanresult.text = "${tv_scanresult.text}\n${bleDevice.name}\n${bleDevice.mac}"
-                if (bleDevice.mac == "EC:79:DB:5D:AB:A1") mbleDevice = bleDevice
+                if (bleDevice.mac == "EC:79:DB:5D:AB:A1") mBleDevice = bleDevice
             }
 
             //本次扫描时段内所有被扫描且过滤后的设备集合
             override fun onScanFinished(scanResultList: List<BleDevice>) {
                 tv_scanresult.text = "扫描结束！找到" + scanResultList.size.toString() + "个设备。\n"
-                if (mbleDevice == null) tv_scanresult.text = "${tv_scanresult.text}未"
+                if (mBleDevice == null) tv_scanresult.text = "${tv_scanresult.text}未"
                 tv_scanresult.text = "${tv_scanresult.text}发现智能衣柜！"
                 for (device in scanResultList)
                     tv_scanresult.text = "${tv_scanresult.text}\n${device.name}\n${device.mac}"
@@ -277,7 +289,7 @@ class MainActivity : AppCompatActivity() {
 
     @SuppressLint("SetTextI18n")    //忽略警告
     private fun connect() {
-        BleManager.getInstance().connect(mbleDevice, object : BleGattCallback() {
+        BleManager.getInstance().connect(mBleDevice, object : BleGattCallback() {
             override fun onStartConnect() {
                 tv_connectlog.text = tv_connectlog.text.toString() + "开始进行连接\n"
             }
@@ -299,7 +311,8 @@ class MainActivity : AppCompatActivity() {
                 gatt: BluetoothGatt,
                 status: Int
             ) {
-                if (isActiveDisConnected) tv_connectlog.text = tv_connectlog.text.toString() + "断开连接！\n"
+                if (isActiveDisConnected) tv_connectlog.text =
+                    tv_connectlog.text.toString() + "断开连接！\n"
                 else tv_connectlog.text = tv_connectlog.text.toString() + "连上了又断了\n"
             }
         })
@@ -311,20 +324,20 @@ class MainActivity : AppCompatActivity() {
         if (!serviceList.isNullOrEmpty()) {
             //获取服务和特征
             for (service in serviceList) {
-                muuid_service = service.uuid.toString()
+                mUuidService = service.uuid.toString()
                 val characteristicList = service.characteristics
                 for (characteristic in characteristicList) {
-                    muuid_chara = characteristic.uuid.toString()
+                    mUuidChara = characteristic.uuid.toString()
                 }
             }
             BleManager.getInstance().notify(
-                mbleDevice,
-                muuid_service,
-                muuid_chara,
+                mBleDevice,
+                mUuidService,
+                mUuidChara,
                 object : BleNotifyCallback() {
                     // 打开通知操作成功
                     override fun onNotifySuccess() {
-                        tv_connectlog.text = "${tv_connectlog.text}$muuid_service\n$muuid_chara\n"
+                        tv_connectlog.text = "${tv_connectlog.text}$mUuidService\n$mUuidChara\n"
                         tv_connectlog.text = "${tv_connectlog.text}打开通知操作成功\n"
                     }
 
@@ -346,9 +359,9 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n")    //忽略警告
     private fun sendMsg(data: String) {
         BleManager.getInstance().write(
-            mbleDevice,
-            muuid_service,
-            muuid_chara,
+            mBleDevice,
+            mUuidService,
+            mUuidChara,
             data.toByteArray(),
             object : BleWriteCallback() {
                 // 发送数据到设备成功（分包发送的情况下，可以通过方法中返回的参数可以查看发送进度）
