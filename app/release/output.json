@@ -1,1 +1,19 @@
-[{"outputType":{"type":"APK"},"apkData":{"type":"MAIN","splits":[],"versionCode":1,"versionName":"1.3","enabled":true,"outputFile":"SmartWardrobe_v1.3_09-08_release.apk","fullName":"release","baseName":"release"},"path":"SmartWardrobe_v1.3_09-08_release.apk","properties":{}}]
+[
+  {
+    "outputType": {
+      "type": "APK"
+    },
+    "apkData": {
+      "type": "MAIN",
+      "splits": [],
+      "versionCode": 1,
+      "versionName": "1.4",
+      "enabled": true,
+      "outputFile": "SmartWardrobe_v1.4_09-08_release.apk",
+      "fullName": "release",
+      "baseName": "release"
+    },
+    "path": "SmartWardrobe_v1.4_09-08_release.apk",
+    "properties": {}
+  }
+]
