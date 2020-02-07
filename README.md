@@ -6,7 +6,7 @@
 [FastBle](https://github.com/Jasonchenlijian/FastBle)  
 
 ## 下载
-[IntWardrobe.apk](http://lfalive.top/SmartWardrobe.apk)
+[SmartWardrobe.apk](http://lfalive.top/SmartWardrobe.apk)
 
 ## 功能
 
@@ -30,6 +30,10 @@
 
 ### V1.4 2020.1.31
 * 修改了APP的logo
+
+### V1.5
+* 多用toast，少改TextView
+* 精简了连接过程的操作
 
 ## 学到了
 * 协程（为了优化资源、异步处理任务

@@ -20,10 +20,14 @@ import com.clj.fastble.data.BleDevice
 import com.clj.fastble.exception.BleException
 import com.clj.fastble.scan.BleScanRuleConfig
 import kotlinx.android.synthetic.main.activity_main.*
-import org.jetbrains.anko.*
+import org.jetbrains.anko.alert
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.selector
+import org.jetbrains.anko.toast
 import java.io.File
 import java.io.OutputStream
 import kotlin.system.exitProcess
+
 
 /*
  *  @project:   SmartWardrobe
@@ -38,8 +42,8 @@ class MainActivity : AppCompatActivity() {
 
     private var mBleDevice: BleDevice? = null   //待连接的设备
     private var mgatt: BluetoothGatt? = null    //GATT协议
-    private var mUuidService: String? = null   //服务
-    private var mUuidChara: String? = null //特征
+    private var mUuidService: String? = null    //服务
+    private var mUuidChara: String? = null  //特征
     private var mpath: String = ""  //文件目录
     private var mitems: MutableList<Item> = mutableListOf() //数据list
 
@@ -56,56 +60,37 @@ class MainActivity : AppCompatActivity() {
             .setConnectOverTime(10000).operateTimeout = 5000
 
         //初始化
-        tv_status.text = if (BleManager.getInstance().isBlueEnable) "开启" else "关闭"
         initPermission()
         mpath = getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).toString() + "/"
         refreshSpinner()
 
-        //蓝牙开关按钮
-        btn_openbt.setOnClickListener { btSwitch(1) }
-        btn_closebt.setOnClickListener { btSwitch(0) }
-
-        //开始扫描
-        btn_startsearch.setOnClickListener {
-            if (BleManager.getInstance().isBlueEnable) {
-                //注意这里有扫描参数设置
-                startScan(
-                    BleScanRuleConfig.Builder().setScanTimeOut(3000).build()
-                )
-            } else toast("请打开蓝牙！")
-        }
-
         //连接设备
         btn_connect.setOnClickListener {
-            when {
-                mBleDevice == null -> tv_connectlog.text =
-                    tv_connectlog.text.toString() + "未发现智能衣柜！\n"
-                BleManager.getInstance().isConnected(mBleDevice) -> toast("请勿重复连接！")
-                else -> connect()
+            doAsync {
+                openBLE()
+                scan()
             }
         }
 
         //连接状态
         btn_connectstate.setOnClickListener {
-            if (BleManager.getInstance().isConnected(mBleDevice)) tv_connectlog.text =
-                tv_connectlog.text.toString() + "OK!\n"
-            else tv_connectlog.text = tv_connectlog.text.toString() + "NOT OK!\n"
+            toast(if (BleManager.getInstance().isConnected(mBleDevice)) "OK!" else "NOT OK!")
         }
 
         //断开连接
         btn_disconnect.setOnClickListener {
-            if (BleManager.getInstance().isConnected(mBleDevice))
+            if (BleManager.getInstance().isConnected(mBleDevice)) {
                 BleManager.getInstance().disconnect(mBleDevice)
-            else tv_connectlog.text = tv_connectlog.text.toString() + "暂无设备连接！\n"
+                mBleDevice = null
+                mgatt = null
+                mUuidService = null
+                mUuidChara = null
+            } else toast("暂无设备连接！")
         }
-
-        //打开notify
-        btn_opennotify.setOnClickListener { openNotify() }
 
         //发送消息
         btn_send.setOnClickListener {
-            if (msg.text.toString() == "") tv_connectlog.text =
-                tv_connectlog.text.toString() + "消息为空！\n"
+            if (msg.text.toString() == "") toast("消息为空！")
             else sendMsg(msg.text.toString() + "\n")
         }
 
@@ -131,11 +116,11 @@ class MainActivity : AppCompatActivity() {
             if (File(mpath + "data.txt").exists()) {
                 tv_data.text = "数据文件为" + mpath + "data.txt\n"
                 readData()
-                tv_data.text = tv_data.text.toString() + "共有" + mitems.size.toString() + "条数据\n"
+                tv_data.text = "${tv_data.text}共有${mitems.size}条数据\n"
                 for (item in mitems) {
-                    tv_data.text = tv_data.text.toString() + "衣柜格子编号为" + item.id.toString() + "\n"
-                    tv_data.text = tv_data.text.toString() + "衣物类别为" + item.type + "\n"
-                    tv_data.text = tv_data.text.toString() + "衣物图片文件名为" + item.img + "\n"
+                    tv_data.text = "${tv_data.text}衣柜格子编号为${item.id}\n"
+                    tv_data.text = "${tv_data.text}衣物类别为${item.type}\n"
+                    tv_data.text = "${tv_data.text}衣物图片文件名为${item.img}\n"
                 }
             } else toast("找不到文件！")
         }
@@ -180,9 +165,9 @@ class MainActivity : AppCompatActivity() {
         val fileNames: MutableList<String> = mutableListOf()
         //在该目录下走一圈，得到文件目录树结构
         val fileTree: FileTreeWalk = File(mpath).walk()
-        fileTree.maxDepth(1) //需遍历的目录层级为1，即无需检查子目录
-            .filter { it.isFile } //只挑选文件，不处理文件夹
-            .filter { it.extension in listOf("png", "jpg") } //选择扩展名为png和jpg的图片文件
+        fileTree.maxDepth(1)    //需遍历的目录层级为1，即无需检查子目录
+            .filter { it.isFile }   //只挑选文件，不处理文件夹
+            .filter { it.extension in listOf("png", "jpg") }    //选择扩展名为png和jpg的图片文件
             .forEach { fileNames.add(it.name) } //循环处理符合条件的文件
         if (fileNames.isNotEmpty()) {
             tv_spinner.text = "点击选择图片"
@@ -204,7 +189,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initPermission() {
-        //private var mRequestCode = 0x1  //权限请求码,因为本应用只需要一次请求，所以省去传参和回调里的判断
+        //private var mRequestCode = 0x1 //权限请求码，因为本应用只需要一次请求，所以省去传参和回调里的判断
         val permissions = arrayOf(
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION
@@ -238,68 +223,60 @@ class MainActivity : AppCompatActivity() {
     }
 
     @Suppress("ControlFlowWithEmptyBody")   //忽略警告
-    private fun btSwitch(flag: Int) {
-        doAsync {
-            //打开/关闭蓝牙，阻塞进程
-            when (flag) {
-                1 -> {
-                    BleManager.getInstance().enableBluetooth()
-                    while (!BleManager.getInstance().isBlueEnable) {
-                    }
-                }
-                0 -> {
-                    BleManager.getInstance().disableBluetooth()
-                    while (BleManager.getInstance().isBlueEnable) {
-                    }
-                }
-            }
-            uiThread { tv_status.text = if (BleManager.getInstance().isBlueEnable) "开启" else "关闭" }
+    private fun openBLE() {
+        BleManager.getInstance().enableBluetooth()
+        while (!BleManager.getInstance().isBlueEnable) {
         }
     }
 
     @SuppressLint("SetTextI18n")    //忽略警告
-    private fun startScan(scanRuleConfig: BleScanRuleConfig) {
-        BleManager.getInstance().initScanRule(scanRuleConfig) //注册扫描参数
+    private fun scan() {
+        mBleDevice = null
+        BleManager.getInstance().initScanRule(
+            BleScanRuleConfig.Builder()
+                .setDeviceMac("EC:79:DB:5D:AB:A1")  // 只扫描指定mac的设备
+                .setScanTimeOut(5000)   // 扫描超时时间，可选，默认10秒；小于等于0表示不限制扫描时间
+                .build()
+        )
         BleManager.getInstance().scan(object : BleScanCallback() {
             //本次扫描动作是否开启成功
             override fun onScanStarted(success: Boolean) {
                 if (success) {
-                    tv_scanresult.text = "Scanning......"
                     toast("开始扫描！")
-                } else toast("正在扫描中！请稍后再试！")
+                } else toast("请稍后再试！")
             }
 
             //扫描过程中的所有过滤后的结果回调
             override fun onScanning(bleDevice: BleDevice) {
-                tv_scanresult.text = "${tv_scanresult.text}\n${bleDevice.name}\n${bleDevice.mac}"
-                if (bleDevice.mac == "EC:79:DB:5D:AB:A1") mBleDevice = bleDevice
             }
 
             //本次扫描时段内所有被扫描且过滤后的设备集合
             override fun onScanFinished(scanResultList: List<BleDevice>) {
-                tv_scanresult.text = "扫描结束！找到" + scanResultList.size.toString() + "个设备。\n"
-                if (mBleDevice == null) tv_scanresult.text = "${tv_scanresult.text}未"
-                tv_scanresult.text = "${tv_scanresult.text}发现智能衣柜！"
-                for (device in scanResultList)
-                    tv_scanresult.text = "${tv_scanresult.text}\n${device.name}\n${device.mac}"
+                if (scanResultList.isEmpty()) toast("未发现设备！")
+                else {
+                    mBleDevice = scanResultList[0]
+                    connect()
+                }
             }
         })
     }
 
     @SuppressLint("SetTextI18n")    //忽略警告
     private fun connect() {
+        mgatt = null
         BleManager.getInstance().connect(mBleDevice, object : BleGattCallback() {
             override fun onStartConnect() {
-                tv_connectlog.text = tv_connectlog.text.toString() + "开始进行连接\n"
+                toast("开始连接")
             }
 
             override fun onConnectFail(bleDevice: BleDevice, exception: BleException) {
-                tv_connectlog.text = tv_connectlog.text.toString() + "连接失败......\n"
+                toast("连接失败")
             }
 
             override fun onConnectSuccess(bleDevice: BleDevice, gatt: BluetoothGatt, status: Int) {
-                tv_connectlog.text = tv_connectlog.text.toString() + "连接成功\n"
+                toast("连接成功")
                 mgatt = gatt
+                openNotify()
                 //status为0连接成功
             }
 
@@ -310,9 +287,8 @@ class MainActivity : AppCompatActivity() {
                 gatt: BluetoothGatt,
                 status: Int
             ) {
-                if (isActiveDisConnected) tv_connectlog.text =
-                    tv_connectlog.text.toString() + "断开连接！\n"
-                else tv_connectlog.text = tv_connectlog.text.toString() + "连上了又断了\n"
+                if (isActiveDisConnected) toast("断开连接！")
+                else toast("连上了又断了")
             }
         })
     }
@@ -320,39 +296,38 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n")    //忽略警告
     private fun openNotify() {
         val serviceList = mgatt?.services
-        if (!serviceList.isNullOrEmpty()) {
-            //获取服务和特征
-            for (service in serviceList) {
-                mUuidService = service.uuid.toString()
-                val characteristicList = service.characteristics
-                for (characteristic in characteristicList) {
-                    mUuidChara = characteristic.uuid.toString()
-                }
-            }
-            BleManager.getInstance().notify(
-                mBleDevice,
-                mUuidService,
-                mUuidChara,
-                object : BleNotifyCallback() {
-                    // 打开通知操作成功
-                    override fun onNotifySuccess() {
-                        tv_connectlog.text = "${tv_connectlog.text}$mUuidService\n$mUuidChara\n"
-                        tv_connectlog.text = "${tv_connectlog.text}打开通知操作成功\n"
-                    }
-
-                    // 打开通知操作失败
-                    override fun onNotifyFailure(exception: BleException) {
-                        tv_connectlog.text = "${tv_connectlog.text}$exception\n"
-                    }
-
-                    // 打开通知后，设备发过来的数据将在这里出现
-                    override fun onCharacteristicChanged(data: ByteArray) {
-                        tv_connectlog.text = tv_connectlog.text.toString() + String(data) + "\n"
-                    }
-                })
-        } else {
-            toast("请连接设备！")
+        if (serviceList.isNullOrEmpty()) {
+            toast("服务出错！")
+            return
         }
+        //获取服务和特征
+        for (service in serviceList) {
+            mUuidService = service.uuid.toString()
+            val characteristicList = service.characteristics
+            for (characteristic in characteristicList) {
+                mUuidChara = characteristic.uuid.toString()
+            }
+        }
+        BleManager.getInstance().notify(
+            mBleDevice,
+            mUuidService,
+            mUuidChara,
+            object : BleNotifyCallback() {
+                // 打开通知操作成功
+                override fun onNotifySuccess() {
+                    toast("Notify成功！")
+                }
+
+                // 打开通知操作失败
+                override fun onNotifyFailure(exception: BleException) {
+                    toast("Notify失败！")
+                }
+
+                // 打开通知后，设备发过来的数据将在这里出现
+                override fun onCharacteristicChanged(data: ByteArray) {
+                    tv_connectlog.text = "${tv_connectlog.text}${String(data)}\n"
+                }
+            })
     }
 
     @SuppressLint("SetTextI18n")    //忽略警告
