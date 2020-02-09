@@ -8,6 +8,8 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.os.Environment
+import android.view.View
+import android.view.WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -20,10 +22,7 @@ import com.clj.fastble.data.BleDevice
 import com.clj.fastble.exception.BleException
 import com.clj.fastble.scan.BleScanRuleConfig
 import kotlinx.android.synthetic.main.activity_main.*
-import org.jetbrains.anko.alert
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.selector
-import org.jetbrains.anko.toast
+import org.jetbrains.anko.*
 import java.io.File
 import java.io.OutputStream
 import kotlin.system.exitProcess
@@ -38,8 +37,11 @@ import kotlin.system.exitProcess
 
 data class Item(var id: Int, var type: String, var img: String)
 
+@Suppress("ControlFlowWithEmptyBody")   //忽略警告
+@SuppressLint("SetTextI18n")
 class MainActivity : AppCompatActivity() {
 
+    private var connectDone: Boolean = false //连接完成否
     private var mBleDevice: BleDevice? = null   //待连接的设备
     private var mgatt: BluetoothGatt? = null    //GATT协议
     private var mUuidService: String? = null    //服务
@@ -47,9 +49,9 @@ class MainActivity : AppCompatActivity() {
     private var mpath: String = ""  //文件目录
     private var mitems: MutableList<Item> = mutableListOf() //数据list
 
-    @SuppressLint("SetTextI18n")    //忽略警告
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        window.setFlags(FLAG_TRANSLUCENT_STATUS, FLAG_TRANSLUCENT_STATUS)   //透明状态栏
         setContentView(R.layout.activity_main)
 
         BleManager.getInstance().init(application)  //轮子初始化
@@ -66,27 +68,28 @@ class MainActivity : AppCompatActivity() {
 
         //连接设备
         btn_connect.setOnClickListener {
+            connectDone = false
+            val progress = alert {
+                isCancelable = false
+                customView {
+                    verticalLayout {
+                        progressBar()
+                        textView("正在连接……").textAlignment = View.TEXT_ALIGNMENT_CENTER
+                        verticalPadding = dip(16)
+                    }
+                }
+            }.show()
             doAsync {
                 openBLE()
                 scan()
+                while (!connectDone) {
+                }
+                uiThread { progress.cancel() }
             }
         }
 
-        //连接状态
-        btn_connectstate.setOnClickListener {
-            toast(if (BleManager.getInstance().isConnected(mBleDevice)) "OK!" else "NOT OK!")
-        }
-
-        //断开连接
-        btn_disconnect.setOnClickListener {
-            if (BleManager.getInstance().isConnected(mBleDevice)) {
-                BleManager.getInstance().disconnect(mBleDevice)
-                mBleDevice = null
-                mgatt = null
-                mUuidService = null
-                mUuidChara = null
-            } else toast("暂无设备连接！")
-        }
+        //存衣
+        btn_insert.setOnClickListener { toast("正在开发……") }
 
         //发送消息
         btn_send.setOnClickListener {
@@ -222,14 +225,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    @Suppress("ControlFlowWithEmptyBody")   //忽略警告
     private fun openBLE() {
         BleManager.getInstance().enableBluetooth()
         while (!BleManager.getInstance().isBlueEnable) {
         }
     }
 
-    @SuppressLint("SetTextI18n")    //忽略警告
     private fun scan() {
         mBleDevice = null
         BleManager.getInstance().initScanRule(
@@ -243,7 +244,10 @@ class MainActivity : AppCompatActivity() {
             override fun onScanStarted(success: Boolean) {
                 if (success) {
                     toast("开始扫描！")
-                } else toast("请稍后再试！")
+                } else {
+                    connectDone = true
+                    toast("请稍后再试！")
+                }
             }
 
             //扫描过程中的所有过滤后的结果回调
@@ -252,8 +256,10 @@ class MainActivity : AppCompatActivity() {
 
             //本次扫描时段内所有被扫描且过滤后的设备集合
             override fun onScanFinished(scanResultList: List<BleDevice>) {
-                if (scanResultList.isEmpty()) toast("未发现设备！")
-                else {
+                if (scanResultList.isEmpty()) {
+                    connectDone = true
+                    toast("未发现设备！")
+                } else {
                     mBleDevice = scanResultList[0]
                     connect()
                 }
@@ -261,7 +267,6 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    @SuppressLint("SetTextI18n")    //忽略警告
     private fun connect() {
         mgatt = null
         BleManager.getInstance().connect(mBleDevice, object : BleGattCallback() {
@@ -270,10 +275,12 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onConnectFail(bleDevice: BleDevice, exception: BleException) {
+                connectDone = true
                 toast("连接失败")
             }
 
             override fun onConnectSuccess(bleDevice: BleDevice, gatt: BluetoothGatt, status: Int) {
+                connectDone = true
                 toast("连接成功")
                 mgatt = gatt
                 openNotify()
@@ -282,21 +289,21 @@ class MainActivity : AppCompatActivity() {
 
             //连接断开，特指连接后再断开的情况。
             override fun onDisConnected(
-                isActiveDisConnected: Boolean,
+                isActiveDisConnected: Boolean,  //是否主动断开
                 bleDevice: BleDevice,
                 gatt: BluetoothGatt,
                 status: Int
             ) {
-                if (isActiveDisConnected) toast("断开连接！")
-                else toast("连上了又断了")
+                connectDone = true
+                toast("连上了又断了")
             }
         })
     }
 
-    @SuppressLint("SetTextI18n")    //忽略警告
     private fun openNotify() {
         val serviceList = mgatt?.services
         if (serviceList.isNullOrEmpty()) {
+            connectDone = true
             toast("服务出错！")
             return
         }
@@ -315,11 +322,13 @@ class MainActivity : AppCompatActivity() {
             object : BleNotifyCallback() {
                 // 打开通知操作成功
                 override fun onNotifySuccess() {
+                    connectDone = true
                     toast("Notify成功！")
                 }
 
                 // 打开通知操作失败
                 override fun onNotifyFailure(exception: BleException) {
+                    connectDone = true
                     toast("Notify失败！")
                 }
 
@@ -330,7 +339,6 @@ class MainActivity : AppCompatActivity() {
             })
     }
 
-    @SuppressLint("SetTextI18n")    //忽略警告
     private fun sendMsg(data: String) {
         BleManager.getInstance().write(
             mBleDevice,

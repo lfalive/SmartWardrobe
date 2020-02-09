@@ -6,6 +6,46 @@
         android:focusableInTouchMode="true"
         android:orientation="vertical">
 
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:background="@color/colorPrimary"
+            android:gravity="fill_horizontal"
+            android:paddingTop="26dp">
+
+        <Button
+                android:id="@+id/btn_connect"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="15dp"
+                android:background="@android:color/transparent"
+                android:gravity="center_vertical"
+                android:text="连接设备"
+                android:textAlignment="center"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+        <Button
+                android:id="@+id/btn_insert"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="15dp"
+                android:background="@android:color/transparent"
+                android:gravity="center_vertical"
+                android:text="存衣"
+                android:textAlignment="center"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+
+    </RelativeLayout>
+
     <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -14,41 +54,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
-
-            <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
-                    android:orientation="horizontal">
-
-                <Button
-                        android:id="@+id/btn_connect"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="连接设备"
-                        android:textColor="#000000"
-                        android:textSize="17sp" />
-
-                <Button
-                        android:id="@+id/btn_connectstate"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="连接状态"
-                        android:textColor="#000000"
-                        android:textSize="17sp" />
-
-                <Button
-                        android:id="@+id/btn_disconnect"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="断开连接"
-                        android:textColor="#000000"
-                        android:textSize="17sp" />
-
-            </LinearLayout>
 
             <LinearLayout
                     android:layout_width="match_parent"
