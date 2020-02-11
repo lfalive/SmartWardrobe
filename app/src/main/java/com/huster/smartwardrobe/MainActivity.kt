@@ -13,6 +13,9 @@ import android.view.WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.clj.fastble.BleManager
 import com.clj.fastble.callback.BleGattCallback
 import com.clj.fastble.callback.BleNotifyCallback
@@ -21,6 +24,9 @@ import com.clj.fastble.callback.BleWriteCallback
 import com.clj.fastble.data.BleDevice
 import com.clj.fastble.exception.BleException
 import com.clj.fastble.scan.BleScanRuleConfig
+import com.zhy.adapter.recyclerview.CommonAdapter
+import com.zhy.adapter.recyclerview.MultiItemTypeAdapter
+import com.zhy.adapter.recyclerview.base.ViewHolder
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.*
 import java.io.File
@@ -48,23 +54,27 @@ class MainActivity : AppCompatActivity() {
     private var mUuidChara: String? = null  //特征
     private var mpath: String = ""  //文件目录
     private var mitems: MutableList<Item> = mutableListOf() //数据list
+    private var mDatas: MutableList<String> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window.setFlags(FLAG_TRANSLUCENT_STATUS, FLAG_TRANSLUCENT_STATUS)   //透明状态栏
         setContentView(R.layout.activity_main)
 
-        BleManager.getInstance().init(application)  //轮子初始化
+        //初始化
+        initTitle()
+        initPermission()
+        initGridView()
+        mpath = getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).toString() + "/"
+        refreshSpinner()
+
+        //蓝牙模块初始化
+        BleManager.getInstance().init(application)
         BleManager.getInstance()
             .enableLog(true)
             .setReConnectCount(1, 5000)
             .setSplitWriteNum(20)
             .setConnectOverTime(10000).operateTimeout = 5000
-
-        //初始化
-        initPermission()
-        mpath = getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).toString() + "/"
-        refreshSpinner()
 
         //连接设备
         btn_connect.setOnClickListener {
@@ -191,6 +201,16 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun initTitle() {
+        val resourceId =
+            applicationContext.resources.getIdentifier("status_bar_height", "dimen", "android")
+        if (resourceId > 0) {
+            val statusBarHeight = applicationContext.resources.getDimensionPixelSize(resourceId)
+            mTitle.layoutParams.height = statusBarHeight + dip(40)
+            mTitle.topPadding = statusBarHeight
+        }
+    }
+
     private fun initPermission() {
         //private var mRequestCode = 0x1 //权限请求码，因为本应用只需要一次请求，所以省去传参和回调里的判断
         val permissions = arrayOf(
@@ -223,6 +243,46 @@ class MainActivity : AppCompatActivity() {
                 break
             }
         }
+    }
+
+    private fun initGridView() {
+        for (i in 1..20) {
+            mDatas.add("衣服$i")
+        }
+        val mRecyclerView: RecyclerView = findViewById(R.id.rv)
+        mRecyclerView.setHasFixedSize(true)
+        mRecyclerView.layoutManager = GridLayoutManager(this, 2)
+        mRecyclerView.itemAnimator = DefaultItemAnimator()
+
+        val mAdapter = object : CommonAdapter<String>(this, R.layout.cell, mDatas) {
+            override fun convert(holder: ViewHolder?, t: String?, position: Int) {
+                holder?.setText(R.id.textview, t)
+            }
+        }
+        mAdapter.setOnItemClickListener(object : MultiItemTypeAdapter.OnItemClickListener {
+            override fun onItemClick(
+                view: View,
+                holder: RecyclerView.ViewHolder,
+                position: Int
+            ) {
+                alert("是否取出该衣服？") {
+                    yesButton {
+                        mDatas.removeAt(position)
+                        mRecyclerView.adapter?.notifyItemRemoved(position)
+                    }
+                    cancelButton { }
+                }.show()
+            }
+
+            override fun onItemLongClick(
+                view: View,
+                holder: RecyclerView.ViewHolder,
+                position: Int
+            ): Boolean {
+                return false
+            }
+        })
+        mRecyclerView.adapter = mAdapter
     }
 
     private fun openBLE() {

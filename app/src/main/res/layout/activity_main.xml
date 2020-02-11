@@ -7,11 +7,12 @@
         android:orientation="vertical">
 
     <RelativeLayout
+            android:id="@+id/mTitle"
             android:layout_width="match_parent"
-            android:layout_height="65dp"
+            android:layout_height="72dp"
             android:background="@color/colorPrimary"
             android:gravity="fill_horizontal"
-            android:paddingTop="26dp">
+            android:paddingTop="32dp">
 
         <Button
                 android:id="@+id/btn_connect"
@@ -259,6 +260,11 @@
                     android:gravity="left"
                     android:textColor="#000000"
                     android:textSize="17sp" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
 
         </LinearLayout>
 
