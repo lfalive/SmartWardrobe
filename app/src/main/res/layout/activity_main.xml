@@ -44,230 +44,247 @@
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
-
     </RelativeLayout>
 
-    <ScrollView
+    <androidx.drawerlayout.widget.DrawerLayout
+            android:id="@+id/drawer_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
 
-        <LinearLayout
+        <!--主页内容-->
+        <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_height="wrap_content">
 
             <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
-                    android:orientation="horizontal">
+                    android:orientation="vertical">
 
-                <EditText
-                        android:id="@+id/msg"
-                        android:layout_width="wrap_content"
+                <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:ems="10"
-                        android:inputType="textPersonName" />
+                        android:layout_margin="5dp"
+                        android:orientation="horizontal">
 
-                <Button
-                        android:id="@+id/btn_send"
-                        android:layout_width="wrap_content"
+                    <EditText
+                            android:id="@+id/msg"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:ems="10"
+                            android:inputType="textPersonName" />
+
+                    <Button
+                            android:id="@+id/btn_send"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="发送消息"
+                            android:textColor="#000000"
+                            android:textSize="17sp" />
+
+                </LinearLayout>
+
+                <TextView
+                        android:id="@+id/tv_connectlog"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="发送消息"
+                        android:layout_margin="5dp"
+                        android:layout_weight="3"
+                        android:gravity="left"
                         android:textColor="#000000"
                         android:textSize="17sp" />
+
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:layout_margin="5dp"
+                        android:orientation="horizontal">
+
+                    <TextView
+                            android:id="@+id/tv_file"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="文件名："
+                            android:textColor="@android:color/black"
+                            android:textSize="17sp" />
+
+                    <TextView
+                            android:id="@+id/tv_spinner"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_toRightOf="@id/tv_file"
+                            android:drawableRight="@android:drawable/ic_menu_more"
+                            android:gravity="center"
+                            android:textColor="@android:color/black"
+                            android:textSize="17sp" />
+
+                </LinearLayout>
+
+                <ImageView
+                        android:id="@+id/iv_image"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:adjustViewBounds="true"
+                        android:scaleType="fitCenter" />
+
+                <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:layout_margin="5dp">
+
+                    <TextView
+                            android:id="@+id/tv_itemid"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentLeft="true"
+                            android:gravity="center"
+                            android:text="格子编号："
+                            android:textColor="@android:color/black"
+                            android:textSize="17sp" />
+
+                    <EditText
+                            android:id="@+id/et_itemid"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_toRightOf="@+id/tv_itemid"
+                            android:background="?attr/editTextBackground"
+                            android:gravity="left|center"
+                            android:hint="请输入衣柜格子编号"
+                            android:inputType="text"
+                            android:maxLength="12"
+                            android:textColor="@android:color/black"
+                            android:textColorHint="@android:color/darker_gray"
+                            android:textSize="17sp" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:layout_margin="5dp">
+
+                    <TextView
+                            android:id="@+id/tv_itemtype"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentLeft="true"
+                            android:gravity="center"
+                            android:text="衣物类别："
+                            android:textColor="@android:color/black"
+                            android:textSize="17sp" />
+
+                    <EditText
+                            android:id="@+id/et_itemtype"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_toRightOf="@+id/tv_itemtype"
+                            android:background="?attr/editTextBackground"
+                            android:gravity="left|center"
+                            android:hint="请输入衣物类别"
+                            android:inputType="text"
+                            android:maxLength="12"
+                            android:textColor="@android:color/black"
+                            android:textColorHint="@android:color/darker_gray"
+                            android:textSize="17sp" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:layout_margin="5dp">
+
+                    <TextView
+                            android:id="@+id/tv_itemimg"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentLeft="true"
+                            android:gravity="center"
+                            android:text="图文件名："
+                            android:textColor="@android:color/black"
+                            android:textSize="17sp" />
+
+                    <EditText
+                            android:id="@+id/et_itemimg"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_toRightOf="@+id/tv_itemimg"
+                            android:background="?attr/editTextBackground"
+                            android:gravity="left|center"
+                            android:hint="请输入图片文件名"
+                            android:inputType="text"
+                            android:maxLength="12"
+                            android:textColor="@android:color/black"
+                            android:textColorHint="@android:color/darker_gray"
+                            android:textSize="17sp" />
+                </RelativeLayout>
+
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:orientation="horizontal">
+
+                    <Button
+                            android:id="@+id/btn_writedata"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="保存数据"
+                            android:textColor="#000000"
+                            android:textSize="17sp" />
+
+                    <Button
+                            android:id="@+id/btn_readdata"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="查看数据"
+                            android:textColor="#000000"
+                            android:textSize="17sp" />
+
+                    <Button
+                            android:id="@+id/btn_deletedata"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="删除数据"
+                            android:textColor="#000000"
+                            android:textSize="17sp" />
+
+                </LinearLayout>
+
+                <TextView
+                        android:id="@+id/tv_data"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:layout_weight="3"
+                        android:gravity="left"
+                        android:textColor="#000000"
+                        android:textSize="17sp" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
 
             </LinearLayout>
 
-            <TextView
-                    android:id="@+id/tv_connectlog"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
-                    android:layout_weight="3"
-                    android:gravity="left"
-                    android:textColor="#000000"
-                    android:textSize="17sp" />
+        </ScrollView>
 
-            <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_margin="5dp"
-                    android:orientation="horizontal">
+        <!--侧边栏内容-->
+        <FrameLayout
+                android:id="@+id/menu_frame"
+                android:layout_width="120dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="start">
 
-                <TextView
-                        android:id="@+id/tv_file"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:text="文件名："
-                        android:textColor="@android:color/black"
-                        android:textSize="17sp" />
+            <include layout="@layout/left_menu" />
+        </FrameLayout>
 
-                <TextView
-                        android:id="@+id/tv_spinner"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_toRightOf="@id/tv_file"
-                        android:drawableRight="@android:drawable/ic_menu_more"
-                        android:gravity="center"
-                        android:textColor="@android:color/black"
-                        android:textSize="17sp" />
-
-            </LinearLayout>
-
-            <ImageView
-                    android:id="@+id/iv_image"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
-                    android:adjustViewBounds="true"
-                    android:scaleType="fitCenter" />
-
-            <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_margin="5dp">
-
-                <TextView
-                        android:id="@+id/tv_itemid"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_alignParentLeft="true"
-                        android:gravity="center"
-                        android:text="格子编号："
-                        android:textColor="@android:color/black"
-                        android:textSize="17sp" />
-
-                <EditText
-                        android:id="@+id/et_itemid"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_toRightOf="@+id/tv_itemid"
-                        android:background="?attr/editTextBackground"
-                        android:gravity="left|center"
-                        android:hint="请输入衣柜格子编号"
-                        android:inputType="text"
-                        android:maxLength="12"
-                        android:textColor="@android:color/black"
-                        android:textColorHint="@android:color/darker_gray"
-                        android:textSize="17sp" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_margin="5dp">
-
-                <TextView
-                        android:id="@+id/tv_itemtype"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_alignParentLeft="true"
-                        android:gravity="center"
-                        android:text="衣物类别："
-                        android:textColor="@android:color/black"
-                        android:textSize="17sp" />
-
-                <EditText
-                        android:id="@+id/et_itemtype"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_toRightOf="@+id/tv_itemtype"
-                        android:background="?attr/editTextBackground"
-                        android:gravity="left|center"
-                        android:hint="请输入衣物类别"
-                        android:inputType="text"
-                        android:maxLength="12"
-                        android:textColor="@android:color/black"
-                        android:textColorHint="@android:color/darker_gray"
-                        android:textSize="17sp" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_margin="5dp">
-
-                <TextView
-                        android:id="@+id/tv_itemimg"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_alignParentLeft="true"
-                        android:gravity="center"
-                        android:text="图文件名："
-                        android:textColor="@android:color/black"
-                        android:textSize="17sp" />
-
-                <EditText
-                        android:id="@+id/et_itemimg"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_toRightOf="@+id/tv_itemimg"
-                        android:background="?attr/editTextBackground"
-                        android:gravity="left|center"
-                        android:hint="请输入图片文件名"
-                        android:inputType="text"
-                        android:maxLength="12"
-                        android:textColor="@android:color/black"
-                        android:textColorHint="@android:color/darker_gray"
-                        android:textSize="17sp" />
-            </RelativeLayout>
-
-            <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
-                    android:orientation="horizontal">
-
-                <Button
-                        android:id="@+id/btn_writedata"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="保存数据"
-                        android:textColor="#000000"
-                        android:textSize="17sp" />
-
-                <Button
-                        android:id="@+id/btn_readdata"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="查看数据"
-                        android:textColor="#000000"
-                        android:textSize="17sp" />
-
-                <Button
-                        android:id="@+id/btn_deletedata"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="删除数据"
-                        android:textColor="#000000"
-                        android:textSize="17sp" />
-
-            </LinearLayout>
-
-            <TextView
-                    android:id="@+id/tv_data"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
-                    android:layout_weight="3"
-                    android:gravity="left"
-                    android:textColor="#000000"
-                    android:textSize="17sp" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rv"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-
-        </LinearLayout>
-
-    </ScrollView>
+    </androidx.drawerlayout.widget.DrawerLayout>
 
 </LinearLayout>

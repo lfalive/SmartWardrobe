@@ -13,6 +13,7 @@ import android.view.WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -24,6 +25,7 @@ import com.clj.fastble.callback.BleWriteCallback
 import com.clj.fastble.data.BleDevice
 import com.clj.fastble.exception.BleException
 import com.clj.fastble.scan.BleScanRuleConfig
+import com.nineoldandroids.view.ViewHelper
 import com.zhy.adapter.recyclerview.CommonAdapter
 import com.zhy.adapter.recyclerview.MultiItemTypeAdapter
 import com.zhy.adapter.recyclerview.base.ViewHolder
@@ -43,7 +45,7 @@ import kotlin.system.exitProcess
 
 data class Item(var id: Int, var type: String, var img: String)
 
-@Suppress("ControlFlowWithEmptyBody")   //忽略警告
+@Suppress("ControlFlowWithEmptyBody", "DEPRECATION")   //忽略警告
 @SuppressLint("SetTextI18n")
 class MainActivity : AppCompatActivity() {
 
@@ -64,6 +66,7 @@ class MainActivity : AppCompatActivity() {
         //初始化
         initTitle()
         initPermission()
+        initSlideMenu()
         initGridView()
         mpath = getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).toString() + "/"
         refreshSpinner()
@@ -243,6 +246,29 @@ class MainActivity : AppCompatActivity() {
                 break
             }
         }
+    }
+
+    private fun initSlideMenu() {
+        //蒙层颜色
+        val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
+        drawerLayout.setScrimColor(resources.getColor(R.color.colorTransparent))
+        drawerLayout.addDrawerListener(object : DrawerLayout.DrawerListener {
+            override fun onDrawerStateChanged(newState: Int) {
+            }
+
+            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
+                val mContent: View = drawerLayout.getChildAt(0)
+                val mMenu: View = drawerView
+                ViewHelper.setTranslationX(mContent, mMenu.measuredWidth * slideOffset)
+            }
+
+            override fun onDrawerClosed(drawerView: View) {
+            }
+
+            override fun onDrawerOpened(drawerView: View) {
+            }
+        }
+        )
     }
 
     private fun initGridView() {
