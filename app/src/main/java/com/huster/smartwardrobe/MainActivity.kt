@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothGatt
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.view.View
@@ -13,14 +14,13 @@ import android.view.WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.clj.fastble.BleManager
-import com.clj.fastble.callback.BleGattCallback
-import com.clj.fastble.callback.BleNotifyCallback
-import com.clj.fastble.callback.BleScanCallback
-import com.clj.fastble.callback.BleWriteCallback
+import com.clj.fastble.callback.*
 import com.clj.fastble.data.BleDevice
 import com.clj.fastble.exception.BleException
 import com.clj.fastble.scan.BleScanRuleConfig
@@ -43,7 +43,7 @@ import kotlin.system.exitProcess
 
 data class Item(var id: Int, var type: String, var img: String)
 
-@Suppress("ControlFlowWithEmptyBody")   //忽略警告
+@Suppress("ControlFlowWithEmptyBody", "DEPRECATION")   //忽略警告
 @SuppressLint("SetTextI18n")
 class MainActivity : AppCompatActivity() {
 
@@ -64,6 +64,7 @@ class MainActivity : AppCompatActivity() {
         //初始化
         initTitle()
         initPermission()
+        initSlideMenu()
         initGridView()
         mpath = getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).toString() + "/"
         refreshSpinner()
@@ -73,7 +74,7 @@ class MainActivity : AppCompatActivity() {
         BleManager.getInstance()
             .enableLog(true)
             .setReConnectCount(1, 5000)
-            .setSplitWriteNum(20)
+            .setSplitWriteNum(10)
             .setConnectOverTime(10000).operateTimeout = 5000
 
         //连接设备
@@ -83,7 +84,9 @@ class MainActivity : AppCompatActivity() {
                 isCancelable = false
                 customView {
                     verticalLayout {
-                        progressBar()
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            progressBar().indeterminateTintList = resources.getColorStateList(R.color.colorPrimary)
+                        }
                         textView("正在连接……").textAlignment = View.TEXT_ALIGNMENT_CENTER
                         verticalPadding = dip(16)
                     }
@@ -100,6 +103,13 @@ class MainActivity : AppCompatActivity() {
 
         //存衣
         btn_insert.setOnClickListener { toast("正在开发……") }
+
+        //菜单
+        btn_slide.setOnClickListener {
+            if (mDrawer.isDrawerOpen(GravityCompat.START)) {
+                mDrawer.closeDrawer(GravityCompat.START)
+            } else mDrawer.openDrawer(GravityCompat.START)
+        }
 
         //发送消息
         btn_send.setOnClickListener {
@@ -218,11 +228,7 @@ class MainActivity : AppCompatActivity() {
             Manifest.permission.ACCESS_COARSE_LOCATION
         )
         for (permission in permissions) {
-            if (ContextCompat.checkSelfPermission(
-                    application,
-                    permission
-                ) != PackageManager.PERMISSION_GRANTED
-            )
+            if (ContextCompat.checkSelfPermission(application, permission) != PackageManager.PERMISSION_GRANTED)
                 ActivityCompat.requestPermissions(this@MainActivity, permissions, 0x1)
         }
     }
@@ -245,15 +251,33 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun initSlideMenu() {
+        mDrawer.setScrimColor(resources.getColor(R.color.colorGrey))   //蒙层颜色
+        mDrawer.addDrawerListener(object : DrawerLayout.DrawerListener {
+            override fun onDrawerStateChanged(newState: Int) {
+            }
+
+            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
+                mContent.translationX = drawerView.measuredWidth * slideOffset
+                btn_slide.rotation = -slideOffset * 180
+            }
+
+            override fun onDrawerClosed(drawerView: View) {
+            }
+
+            override fun onDrawerOpened(drawerView: View) {
+            }
+        }
+        )
+    }
+
     private fun initGridView() {
         for (i in 1..20) {
             mDatas.add("衣服$i")
         }
-        val mRecyclerView: RecyclerView = findViewById(R.id.rv)
-        mRecyclerView.setHasFixedSize(true)
-        mRecyclerView.layoutManager = GridLayoutManager(this, 2)
-        mRecyclerView.itemAnimator = DefaultItemAnimator()
-
+        rv.setHasFixedSize(true)
+        rv.layoutManager = GridLayoutManager(this, 2)
+        rv.itemAnimator = DefaultItemAnimator()
         val mAdapter = object : CommonAdapter<String>(this, R.layout.cell, mDatas) {
             override fun convert(holder: ViewHolder?, t: String?, position: Int) {
                 holder?.setText(R.id.textview, t)
@@ -268,7 +292,7 @@ class MainActivity : AppCompatActivity() {
                 alert("是否取出该衣服？") {
                     yesButton {
                         mDatas.removeAt(position)
-                        mRecyclerView.adapter?.notifyItemRemoved(position)
+                        rv.adapter?.notifyItemRemoved(position)
                     }
                     cancelButton { }
                 }.show()
@@ -282,7 +306,7 @@ class MainActivity : AppCompatActivity() {
                 return false
             }
         })
-        mRecyclerView.adapter = mAdapter
+        rv.adapter = mAdapter
     }
 
     private fun openBLE() {
@@ -383,6 +407,8 @@ class MainActivity : AppCompatActivity() {
                 // 打开通知操作成功
                 override fun onNotifySuccess() {
                     connectDone = true
+                    btn_connect.setImageDrawable(resources.getDrawable(R.drawable.icon_connected))
+                    btn_send.isEnabled = true
                     toast("Notify成功！")
                 }
 

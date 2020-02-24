@@ -6,14 +6,15 @@
     "apkData": {
       "type": "MAIN",
       "splits": [],
-      "versionCode": 1,
+      "versionCode": 6,
       "versionName": "1.5",
       "enabled": true,
-      "outputFile": "SmartWardrobe_v1.5_02-12_release.apk",
+      "outputFile": "SmartWardrobe_v1.5_02-25_release.apk",
       "fullName": "release",
-      "baseName": "release"
+      "baseName": "release",
+      "dirName": ""
     },
-    "path": "SmartWardrobe_v1.5_02-12_release.apk",
+    "path": "SmartWardrobe_v1.5_02-25_release.apk",
     "properties": {}
   }
 ]
