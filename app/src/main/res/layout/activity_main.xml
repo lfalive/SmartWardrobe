@@ -272,10 +272,15 @@
                         android:textColor="#000000"
                         android:textSize="17sp" />
 
-                <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/rv"
+                <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                        android:layout_height="wrap_content">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rv"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+                </RelativeLayout>
 
             </LinearLayout>
 

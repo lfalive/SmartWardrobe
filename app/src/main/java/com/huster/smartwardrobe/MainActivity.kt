@@ -6,7 +6,6 @@ import android.bluetooth.BluetoothGatt
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.view.View
@@ -14,6 +13,7 @@ import android.view.WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.DefaultItemAnimator
@@ -28,6 +28,7 @@ import com.zhy.adapter.recyclerview.CommonAdapter
 import com.zhy.adapter.recyclerview.MultiItemTypeAdapter
 import com.zhy.adapter.recyclerview.base.ViewHolder
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.left_menu.*
 import org.jetbrains.anko.*
 import java.io.File
 import java.io.OutputStream
@@ -52,9 +53,12 @@ class MainActivity : AppCompatActivity() {
     private var mgatt: BluetoothGatt? = null    //GATT协议
     private var mUuidService: String? = null    //服务
     private var mUuidChara: String? = null  //特征
-    private var mpath: String = ""  //文件目录
+    private lateinit var mpath: String  //文件目录
+    private lateinit var mAdapter: CommonAdapter<Bitmap>    //GridView适配器
     private var mitems: MutableList<Item> = mutableListOf() //数据list
-    private var mDatas: MutableList<String> = mutableListOf()
+    private var mDatas: MutableList<Bitmap> = mutableListOf()
+    private var clothes: MutableList<Bitmap> = mutableListOf()
+    private var pants: MutableList<Bitmap> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,9 +88,7 @@ class MainActivity : AppCompatActivity() {
                 isCancelable = false
                 customView {
                     verticalLayout {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            progressBar().indeterminateTintList = resources.getColorStateList(R.color.colorPrimary)
-                        }
+                        progressBar().indeterminateTintList = resources.getColorStateList(R.color.colorPrimary)
                         textView("正在连接……").textAlignment = View.TEXT_ALIGNMENT_CENTER
                         verticalPadding = dip(16)
                     }
@@ -110,6 +112,10 @@ class MainActivity : AppCompatActivity() {
                 mDrawer.closeDrawer(GravityCompat.START)
             } else mDrawer.openDrawer(GravityCompat.START)
         }
+
+        //切换分类
+        btn_menu1.setOnClickListener { menuClicked(btn_menu1) }
+        btn_menu2.setOnClickListener { menuClicked(btn_menu2) }
 
         //发送消息
         btn_send.setOnClickListener {
@@ -271,16 +277,31 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
+    private fun menuClicked(view: View) {
+        btn_menu1.background = resources.getDrawable(R.color.colorPrimary)
+        btn_menu2.background = resources.getDrawable(R.color.colorPrimary)
+        view.background = resources.getDrawable(R.color.colorDrakBlue)
+        mDatas.clear()
+        when (view) {
+            btn_menu1 -> mDatas.addAll(clothes)
+            btn_menu2 -> mDatas.addAll(pants)
+        }
+        mAdapter.notifyDataSetChanged()
+        mDrawer.closeDrawer(GravityCompat.START)
+    }
+
     private fun initGridView() {
-        for (i in 1..20) {
-            mDatas.add("衣服$i")
+        for (i in 1..9) {
+            clothes.add(resources.getDrawable(R.drawable.clothes).toBitmap())
+            pants.add(resources.getDrawable(R.drawable.pants).toBitmap())
         }
         rv.setHasFixedSize(true)
+        rv.isNestedScrollingEnabled = false //禁止滑动
         rv.layoutManager = GridLayoutManager(this, 2)
         rv.itemAnimator = DefaultItemAnimator()
-        val mAdapter = object : CommonAdapter<String>(this, R.layout.cell, mDatas) {
-            override fun convert(holder: ViewHolder?, t: String?, position: Int) {
-                holder?.setText(R.id.textview, t)
+        mAdapter = object : CommonAdapter<Bitmap>(this, R.layout.cell, mDatas) {
+            override fun convert(holder: ViewHolder?, t: Bitmap?, position: Int) {
+                holder?.setImageBitmap(R.id.imageview, t)
             }
         }
         mAdapter.setOnItemClickListener(object : MultiItemTypeAdapter.OnItemClickListener {
@@ -307,6 +328,7 @@ class MainActivity : AppCompatActivity() {
             }
         })
         rv.adapter = mAdapter
+        menuClicked(btn_menu1)
     }
 
     private fun openBLE() {
