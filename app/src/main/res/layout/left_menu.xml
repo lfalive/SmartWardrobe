@@ -10,7 +10,6 @@
             android:orientation="vertical">
 
         <LinearLayout
-                android:id="@+id/menu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"

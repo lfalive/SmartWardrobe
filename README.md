@@ -36,18 +36,21 @@
 ### V1.5 2020.2.25
 * 多用toast，少改TextView
 * 精简了连接过程的操作
-* RecycleView的尝试
+* RecyclerView的尝试
 * 根据设备状态栏高度自适应的沉浸式标题栏
 * SlideMenu的尝试
 
-## 学到了
+### V1.6
+* 完善了SlideMenu + RecyclerView
+
+## 其他
 * 协程（为了优化资源、异步处理任务
 * 动态权限的申请（大坑，调了很久
 * Anko提供的Toast和Alert等（很好用
-* 指定jdk版本以解决一些问题
+* 指定jdk版本以解决一些问题（之后版本不需要，又去掉了
 * 使用@SuppressLint()忽略了一类警告（关于String的，暂时不想管
 * Byte[]、HexString、String的相互转换和处理
 * 用Edit_text控件实现Spinner
 * kotlin.io库和java.io库的使用
 * Bitmap、Byte[]、图片文件的相互转换
-* Adapter的应用
+* RecycleView的应用
