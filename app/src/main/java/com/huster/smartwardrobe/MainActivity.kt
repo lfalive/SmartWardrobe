@@ -3,6 +3,7 @@ package com.huster.smartwardrobe
 import android.Manifest
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothGatt
+import android.content.DialogInterface
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -48,7 +49,8 @@ data class Item(var id: Int, var type: String, var img: String)
 @SuppressLint("SetTextI18n")
 class MainActivity : AppCompatActivity() {
 
-    private var connectDone: Boolean = false //连接完成否
+    private var connectDone: Boolean = false    //单次连接完成否
+    private var connected: Boolean = false  //当前蓝牙连接状态
     private var mBleDevice: BleDevice? = null   //待连接的设备
     private var mgatt: BluetoothGatt? = null    //GATT协议
     private var mUuidService: String? = null    //服务
@@ -83,23 +85,29 @@ class MainActivity : AppCompatActivity() {
 
         //连接设备
         btn_connect.setOnClickListener {
-            connectDone = false
-            val progress = alert {
-                isCancelable = false
-                customView {
-                    verticalLayout {
-                        progressBar().indeterminateTintList = resources.getColorStateList(R.color.colorPrimary)
-                        textView("正在连接……").textAlignment = View.TEXT_ALIGNMENT_CENTER
-                        verticalPadding = dip(16)
+            if (!connected) {   //连接
+                connectDone = false
+                val progress = mAlert("正在连接……")
+                doAsync {
+                    openBLE()
+                    scan()
+                    while (!connectDone) {
+                    }
+                    uiThread {
+                        progress.cancel()
                     }
                 }
-            }.show()
-            doAsync {
-                openBLE()
-                scan()
-                while (!connectDone) {
+            } else {    //断开连接
+                val progress = mAlert("断开连接……")
+                doAsync {
+                    BleManager.getInstance().disconnect(mBleDevice)
+                    while (BleManager.getInstance().isConnected(mBleDevice)) {
+                    }
+                    uiThread {
+                        progress.cancel()
+                        btn_connect.setImageDrawable(resources.getDrawable(R.drawable.icon_disconnected))
+                    }
                 }
-                uiThread { progress.cancel() }
             }
         }
 
@@ -160,6 +168,19 @@ class MainActivity : AppCompatActivity() {
             tv_data.text = "已删除" + mpath + "data.txt\n"
         }
 
+    }
+
+    private fun mAlert(msg: String): DialogInterface {
+        return alert {
+            isCancelable = false
+            customView {
+                verticalLayout {
+                    progressBar().indeterminateTintList = resources.getColorStateList(R.color.colorPrimary)
+                    textView(msg).textAlignment = View.TEXT_ALIGNMENT_CENTER
+                    verticalPadding = dip(16)
+                }
+            }
+        }.show()
     }
 
     private fun readData() {
