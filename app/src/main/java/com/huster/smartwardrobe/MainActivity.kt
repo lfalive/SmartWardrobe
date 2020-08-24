@@ -12,8 +12,10 @@ import android.os.Environment
 import android.view.View
 import android.view.WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -45,8 +47,8 @@ import kotlin.system.exitProcess
 
 data class Item(var id: Int, var type: String, var img: String)
 
-@Suppress("ControlFlowWithEmptyBody", "DEPRECATION")   //忽略警告
-@SuppressLint("SetTextI18n")
+@Suppress("ControlFlowWithEmptyBody", "DEPRECATION")
+@SuppressLint("SetTextI18n")    //忽略警告,getresources
 class MainActivity : AppCompatActivity() {
 
     private var connectDone: Boolean = false    //单次连接完成否
@@ -105,7 +107,9 @@ class MainActivity : AppCompatActivity() {
                     }
                     uiThread {
                         progress.cancel()
-                        btn_connect.setImageDrawable(resources.getDrawable(R.drawable.icon_disconnected))
+                        btn_connect.setImageDrawable(
+                            ResourcesCompat.getDrawable(resources, R.drawable.icon_disconnected, null)
+                        )
                     }
                 }
             }
@@ -175,7 +179,8 @@ class MainActivity : AppCompatActivity() {
             isCancelable = false
             customView {
                 verticalLayout {
-                    progressBar().indeterminateTintList = resources.getColorStateList(R.color.colorPrimary)
+                    progressBar().indeterminateTintList =
+                        AppCompatResources.getColorStateList(context, R.color.colorPrimary)
                     textView(msg).textAlignment = View.TEXT_ALIGNMENT_CENTER
                     verticalPadding = dip(16)
                 }
@@ -299,9 +304,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun menuClicked(view: View) {
-        btn_menu1.background = resources.getDrawable(R.color.colorPrimary)
-        btn_menu2.background = resources.getDrawable(R.color.colorPrimary)
-        view.background = resources.getDrawable(R.color.colorDrakBlue)
+        btn_menu1.background = ResourcesCompat.getDrawable(resources, R.color.colorPrimary, null)
+        btn_menu2.background = ResourcesCompat.getDrawable(resources, R.color.colorPrimary, null)
+        view.background = ResourcesCompat.getDrawable(resources, R.color.colorDrakBlue, null)
         mDatas.clear()
         when (view) {
             btn_menu1 -> mDatas.addAll(clothes)
@@ -313,8 +318,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun initGridView() {
         for (i in 1..9) {
-            clothes.add(resources.getDrawable(R.drawable.clothes).toBitmap())
-            pants.add(resources.getDrawable(R.drawable.pants).toBitmap())
+            ResourcesCompat.getDrawable(resources, R.drawable.clothes, null)?.toBitmap()?.let { clothes.add(it) }
+            ResourcesCompat.getDrawable(resources, R.drawable.pants, null)?.toBitmap()?.let { pants.add(it) }
         }
         rv.setHasFixedSize(true)
         rv.isNestedScrollingEnabled = false //禁止滑动
@@ -450,7 +455,7 @@ class MainActivity : AppCompatActivity() {
                 // 打开通知操作成功
                 override fun onNotifySuccess() {
                     connectDone = true
-                    btn_connect.setImageDrawable(resources.getDrawable(R.drawable.icon_connected))
+                    btn_connect.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.icon_connected, null))
                     btn_send.isEnabled = true
                     toast("Notify成功！")
                 }

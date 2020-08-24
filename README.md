@@ -8,7 +8,16 @@
 [baseAdapter](https://github.com/hongyangAndroid/baseAdapter)
 
 ## 下载
-[SmartWardrobe.apk](http://lfalive.top/SmartWardrobe.apk)
+[SmartWardrobe_v1.6_08-24_release.apk](http://lfalive.top/SmartWardrobe.apk)
+
+## 部分配置参数
+* compileSdkVersion 30
+* buildToolsVersion '30.0.2'
+* minSdkVersion 21
+* ext.kotlin_version = '1.4.0'
+* com.android.tools.build:gradle:4.0.1
+* gradle:6.6
+* Android Studio 4.0.1, Build #AI-193.6911.18.40.6626763, built on June 25, 2020
 
 ## 功能
 
@@ -40,8 +49,9 @@
 * 根据设备状态栏高度自适应的沉浸式标题栏
 * SlideMenu的尝试
 
-### V1.6
+### V1.6 2020.8.24
 * 完善了SlideMenu + RecyclerView
+* 更新了一些插件版本和SDK版本，最高支持Android R
 
 ## 其他
 * 协程（为了优化资源、异步处理任务
